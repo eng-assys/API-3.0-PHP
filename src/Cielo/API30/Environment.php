@@ -22,18 +22,4 @@ interface Environment
      * @return string the Api Query URL
      */
     public function getApiQueryURL();
-
-    /**
-     * Gets the environment's Braspag Auth URL
-     *
-     * @return string Braspag Auth URL
-     */
-    public function getbraspagAuthURL();
-
-    /**
-     * Gets the environment's Api Braspag Split URL
-     *
-     * @return string Api Braspag Split URL
-     */
-    public function getapiBraspagSplitURL();
 }

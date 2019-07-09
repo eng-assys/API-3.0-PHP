@@ -47,7 +47,8 @@ abstract class AbstractRequest
             'Accept: application/json',
             'Accept-Encoding: gzip',
             'User-Agent: CieloEcommerce/3.0 PHP SDK',
-            "Authorization: Bearer {$this->merchant->getAccessToken()}",
+            'MerchantId: ' . $this->merchant->getId(),
+            'MerchantKey: ' . $this->merchant->getKey(),
             'RequestId: ' . uniqid()
         ];
 

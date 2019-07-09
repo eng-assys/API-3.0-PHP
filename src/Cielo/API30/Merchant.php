@@ -2,9 +2,6 @@
 
 namespace Cielo\API30;
 
-use GuzzleHttp\Client as GuzzleClient;
-use GuzzleHttp\Exception\ConnectException;
-
 /**
  * Class Merchant
  *
@@ -14,7 +11,6 @@ class Merchant
 {
     private $id;
     private $key;
-    private $accessToken;
 
     /**
      * Merchant constructor.
@@ -46,59 +42,6 @@ class Merchant
     public function getKey()
     {
         return $this->key;
-    }
-
-    /**
-     * Sets the access token
-     *
-     * @return void
-     */
-    public function setAccessToken(){
-        if (!isset($this->accessToken)){
-            $this->accessToken = $this->authBraspag();
-        }
-    }
-
-    /**
-     * Gets the access token
-     *
-     * @return string the access token on Cielo by Braspag OAuth2
-     */
-    public function getAccessToken(){
-        if (!isset($this->accessToken)){
-            $this->setAccessToken();
-        }
-        return $this->accessToken;
-    }
-
-    private function authBraspag(){
-        $client = new GuzzleClient();
-        try {
-            $callback = $client->post('https://authsandbox.braspag.com.br/oauth2/token',
-                [
-                    'http_errors' => false,
-                    'auth' => [
-                        $this->id,
-                        $this->key
-                    ],
-                    'headers' => [
-                        'Accept: application/json',
-                        'User-Agent: CieloEcommerce/3.0 PHP SDK',
-                        "Authorization: Basic " . base64_encode($this->id.':'.$this->key)
-                    ],
-                    'form_params' => [
-                        'grant_type' => 'client_credentials'
-                    ]
-                ]
-            );
-
-            $callback_decoded = json_decode($callback->getBody(), true);
-
-            return $callback_decoded['access_token'];
-
-        } catch (ConnectException $ex) {
-            return null;
-        }
     }
 
 }
