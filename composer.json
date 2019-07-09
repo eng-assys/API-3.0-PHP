@@ -4,8 +4,8 @@
       "Cielo": "src"
     }
   },
-  "name": "gerenciagram/cielo-braspag-api-3.0-php",
-  "description": "Integração com a API 3.0 da Cielo com adição do Split de Pagamentos da Braspag",
+  "name": "developercielo/api-3.0-php",
+  "description": "Integração com a API 3.0 da Cielo",
   "license": "MIT",
   "type": "library",
   "require": {
