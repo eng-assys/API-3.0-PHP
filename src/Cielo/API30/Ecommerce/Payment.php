@@ -2,7 +2,6 @@
 
 namespace Cielo\API30\Ecommerce;
 
-use Cielo\API30\Ecommerce\SplitPayment\SplitPayment;
 use Cielo\API30\Ecommerce\RecurrentPayment\RecurrentPayment;
 use Cielo\API30\Ecommerce\FraudAnalysis\FraudAnalysis;
 use Cielo\API30\Ecommerce\VelocityAnalysis\VelocityAnalysis;
@@ -17,11 +16,7 @@ class Payment implements \JsonSerializable
 
     const PAYMENTTYPE_CREDITCARD = 'CreditCard';
 
-    const PAYMENTTYPE_SPLITTEDCREDITCARD = 'SplittedCreditCard';
-
     const PAYMENTTYPE_DEBITCARD = 'DebitCard';
-
-    const PAYMENTTYPE_SPLITTEDDEBITCARD = 'SplittedDebitCard';
 
     const PAYMENTTYPE_ELECTRONIC_TRANSFER = 'ElectronicTransfer';
 
@@ -355,17 +350,6 @@ class Payment implements \JsonSerializable
      */
     private $recurrentPayment;
 
-    /** @var boolean|null 
-     * Marcação de uma Transação com Split de Pagamento da Braspag Ativado
-     * Tamanho: 5
-     */
-    private $isSplitted;
-
-    /** @var SplitPayment|null 
-     * Instância de Pagamento Dividido
-     */
-    private $splitPayments;
-
     /** @var FraudAnalysis|null 
      * Nó de análise de fraude
      * 
@@ -485,15 +469,6 @@ class Payment implements \JsonSerializable
             $this->recurrentPayment->populate($data->RecurrentPayment);
         }
 
-        $this->isSplitted = isset($data->IsSplitted) ? !!$data->IsSplitted : false;
-        if (isset($data->SplitPayments)) {
-            foreach ($data->SplitPayments as $splitPayment) {
-                $splittedPayment = new SplitPayment();
-                $splittedPayment->populate($splitPayment);    
-                $this->recurrentPayment[] = $splittedPayment;
-            }      
-        }
-
         if (isset($data->FraudAnalysis)) {
             $this->fraudAnalysis = new FraudAnalysis();
             $this->fraudAnalysis->populate($data->FraudAnalysis);
@@ -540,22 +515,6 @@ class Payment implements \JsonSerializable
      *
      * @return CreditCard
      */
-    public function splittedCreditCard($securityCode, $brand)
-    {
-        $card = $this->newCard($securityCode, $brand);
-
-        $this->setType(self::PAYMENTTYPE_SPLITTEDCREDITCARD);
-        $this->setCreditCard($card);
-
-        return $card;
-    }
-
-    /**
-     * @param $securityCode
-     * @param $brand
-     *
-     * @return CreditCard
-     */
     private function newCard($securityCode, $brand)
     {
         $card = new CreditCard();
@@ -576,22 +535,6 @@ class Payment implements \JsonSerializable
         $card = $this->newCard($securityCode, $brand);
 
         $this->setType(self::PAYMENTTYPE_DEBITCARD);
-        $this->setDebitCard($card);
-
-        return $card;
-    }
-
-    /**
-     * @param $securityCode
-     * @param $brand
-     *
-     * @return CreditCard
-     */
-    public function splittedDebitCard($securityCode, $brand)
-    {
-        $card = $this->newCard($securityCode, $brand);
-
-        $this->setType(self::PAYMENTTYPE_SPLITTEDDEBITCARD);
         $this->setDebitCard($card);
 
         return $card;
@@ -1447,59 +1390,6 @@ class Payment implements \JsonSerializable
     public function setInstructions($instructions)
     {
         $this->instructions = $instructions;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getSplitPayments()
-    {
-        return $this->splitPayments;
-    }
-
-    /**
-     * @param $subordinateMerchantId
-     *
-     * @return SplitPayment
-     */
-    public function splitPayment($subordinateMerchantId)
-    {
-        $splitPayment = new SplitPayment($subordinateMerchantId);
-        $this->splitPayments[] = $splitPayment;
-
-        return $splitPayment;
-    }
-
-    /**
-     * @param $splitPayments
-     *
-     * @return $this
-     */
-    public function setSplitPayments($splitPayments)
-    {
-        $this->splitPayments = $splitPayments;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getIsSplitted()
-    {
-        return $this->isSplitted;
-    }
-
-    /**
-     * @param $isSplitted
-     *
-     * @return $this
-     */
-    public function setIsSplitted($isSplitted)
-    {
-        $this->isSplitted = $isSplitted;
 
         return $this;
     }
